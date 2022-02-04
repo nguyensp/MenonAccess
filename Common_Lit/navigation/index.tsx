@@ -55,7 +55,7 @@
             <FontAwesome
               name="question"
               size={25}
-              //color={Colors[colorScheme].text}
+              color={"#008080"}
               style={{ marginRight: 15 }}
             />
           </Pressable>
@@ -89,8 +89,8 @@
          name="Catalog"
          component={CatalogScreen}
          options={({ navigation }: RootTabScreenProps<'Catalog'>) => ({
-           title: 'Catalog',
-           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+           title: 'Catalogar',
+           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={"#008080"} />,
            headerRight: () => (
              <Pressable
                onPress={() => navigation.navigate('Filter')}
@@ -100,7 +100,7 @@
                <FontAwesome
                  name="filter"
                  size={25}
-                 color={"Colors[colorScheme].text"}
+                 color={"#008080"}
                  style={{ marginRight: 15 }}
                />
              </Pressable>
@@ -111,8 +111,8 @@
          name="Download"
          component={DownloadScreen}
          options={({ navigation }: RootTabScreenProps<'Download'>) => ({
-          title: 'Downloads',
-          tabBarIcon: ({ color }) => <TabBarIcon name="download" color={color} />,
+          title: 'Descargas',
+          tabBarIcon: ({ color }) => <TabBarIcon name="download" color={"#008080"} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Text')}
@@ -122,13 +122,14 @@
               <FontAwesome
                 name="book"
                 size={25}
-                color={Colors[colorScheme].text}
+                color={"#008080"}
                 style={{ marginRight: 15 }}
               />
             </Pressable>
           ),
         })}
        />
+       
      </BottomTab.Navigator>
      
    );

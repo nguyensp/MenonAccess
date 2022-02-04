@@ -1,38 +1,61 @@
-import { StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
 
 import { Text, View } from '../components/Themed';
 import { RootStackScreenProps } from '../types';
 import {WebView} from 'react-native-webview';
 import {getParent} from 'domutils';
+import { useEffect, useContext, useState } from 'react';
+import LibContext from '../context/LibContext';
 
 export default function TextScreen({ navigation }: RootStackScreenProps<'Text'>) {
-  const text = "https://www.mushroom-ebooks.com/authors/akers/samplers/AKERSTransitToScorpio%28Sampler%29.html"
-  const contentWidth = useWindowDimensions().width * 2;
-  const contentHeight = useWindowDimensions().height - 210;
-  const styles = StyleSheet.create({
-    container: {
-      flex: 0,
-      width: contentWidth,
-      height: contentHeight,
-      marginVertical: 8,
-      marginHorizontal: 16,
-      //backgroundColor: 'offwhite',
-    },
-  });
-
-  return (
-    <View style={styles.container}>
-      <ScrollView>
+  const {textData, getDownloadJSONHTML} = useContext(LibContext);
+  //htmlData = textData.html;
+    //console.log(textData);
+    const contentWidth = useWindowDimensions().width;
+    const contentHeight = useWindowDimensions().height ;
+    //const [isBookLoading, setBookLoading] = useState(true);
+    const styles = StyleSheet.create({
+      container: {
+        flex: 0,
+        width: contentWidth,
+        height: contentHeight,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        //backgroundColor: 'offwhite',
+      },
+    });
+    /*
+    <Text style={styles.baseText}>
+              <Text style={styles.titleText}>
+                {textData.name}
+                {'\n'}
+                By: {textData.author}
+                {'\n'}
+                {'\n'}
+              </Text>
+            </Text>
+            */
+    return (
+      <View>
+          <ScrollView>
+            
             <ScrollView horizontal>
               <View>
-                <WebView style={styles.container} source={{uri: text}} />
+                <WebView style={styles.container} source={{html: textData.html}} />
               </View>
             </ScrollView>
           </ScrollView>
-      <TouchableOpacity onPress={() => navigation.replace('Root')} style={styles.link}>
-      </TouchableOpacity>
-    </View>
-  );
+      </View>
+    );
 }
 /*
 const styles = StyleSheet.create({

@@ -9,17 +9,10 @@ export const LibProvider = ({ children }) => {
     const [textData, setTextData] = useState([]);
     const [isTextLoading, setTextLoading] = useState(true);
     const [categories, setCategories] = useState([]);
-    const [catalog, setCatalog] = useState([]);
-    const [userList, setUserList] = useState([]);
-    const [subCatalog, setSubCatalog] = useState([]);
-    const blogPosts = [{title: 'Blog 1'}, {title: 'Blog 2'}];
-    //const [blogPosts, setBlogPosts] = useState([]);
+    const [placeHolder, setPlaceHolder] = useState([]);
+    const [downloads, setDownloads] = useState([]);
 
     const db = SQLite.openDatabase('fresh_one.db');
-
-    //Substitue API calls
-    //https://api.trivia.willfry.co.uk/questions?limit=7
-    //https://jsonplaceholder.typicode.com/
 
     const getNetInfo = () => {
         NetInfo.fetch().then(state => {
@@ -46,55 +39,11 @@ export const LibProvider = ({ children }) => {
       );
     });
   }
-
+ 
+  //CHAIN API and SQL Feature Code
   const createTables = () => {
-    dataBaseCommand("CREATE TABLE IF NOT EXISTS subCatalog (id INTEGER PRIMARY KEY, name VARCHAR(20), grade_level INTEGER, genre VARCHAR(20))", [], "subCatalog created successfully", "error creating table: ");
-    dataBaseCommand("CREATE TABLE IF NOT EXISTS subDownloads (id INTEGER PRIMARY KEY, name VARCHAR(20), grade_level INTEGER, genre VARCHAR(20))", [], "subDownloads created successfully", "error creating table: ");
-  };
-
-  const apiSubLibrary = async () => {
-    try {
-      fetch(
-        'https://jsonplaceholder.typicode.com/todos',
-      ).then( response => {
-        return response.json();
-      }).then( data => {
-          setSubCatalog(data);
-          /*
-        const len = data.length;
-        let start = 0;
-        while (start < len) {
-            let cId = Number(data.id);
-            let cName = JSON.stringify(data.title);
-            let cGrade = Number(data.userId);
-            let genreString = JSON.stringify(data.completed);
-            db.transaction(txn => {
-                txn.executeSql(
-                    `INSERT INTO catalog (id, name, grade_level, genres) VALUES(?, ?, ?, ?)`,
-                    [cId, cName, cGrade, genreString],
-                    (sqlTxn, res) => {
-                        console.log(`${cName} inserted into Catalog`);
-                    },
-                    error => {
-                        console.log(`error`);
-                    },
-                );
-            }); 
-          start++;
-        }
-        */
-      })
-    } catch (error) {
-      console.error(error);
-    } finally {
-      //setLibraryLoading(false);
-    }
-  };
-
-  /* CHAIN API and SQL Feature Code
-  const createTables = () => {
-    dataBaseCommand("CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, name VARCHAR(20), grade_level INTEGER, genres VARCHAR(200))", [], "catalog created successfully", "error creating table: ");
-    dataBaseCommand("CREATE TABLE IF NOT EXISTS downloads (id INTEGER PRIMARY KEY, name VARCHAR(20), grade_level, genres VARCHAR(200))", [], "downloads created successfully", "error creating table: ");
+    dataBaseCommand("CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, name VARCHAR(20), author VARCHAR(20), grade_level INTEGER, genres VARCHAR(200))", [], "catalog created successfully", "error creating table: ");
+    dataBaseCommand("CREATE TABLE IF NOT EXISTS downloads (id INTEGER PRIMARY KEY, name VARCHAR(20), author VARCHAR(20), grade_level, genres VARCHAR(200))", [], "downloads created successfully", "error creating table: ");
     dataBaseCommand("CREATE TABLE IF NOT EXISTS textJSON (id INTEGER PRIMARY KEY, json NVARCHAR(4000))", [], "bookJSON created successfully", "error creating table: ");
   };
 
@@ -129,7 +78,7 @@ export const LibProvider = ({ children }) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLibraryLoading(false);
+      //setLibraryLoading(false);
     }
   };
 
@@ -137,7 +86,7 @@ export const LibProvider = ({ children }) => {
     let done: boolean = false;
     
     try {
-      const token =
+      const token = 
 
       await fetch(
         'https://www.commonlit.org/api/v1/raw_content/lesson_templates/' +
@@ -159,6 +108,7 @@ export const LibProvider = ({ children }) => {
             break;
           case "html":
             console.log(data.html);
+            break;
           case "student_intro":
             console.log(data.student_intro);
             break;
@@ -192,12 +142,13 @@ export const LibProvider = ({ children }) => {
           case "APIToCatalog":
             let cId = Number(data.id);
             let cName = JSON.stringify(data.name);
+            let cAuthor = JSON.stringify(data.author);
             let cGrade = Number(data.grade_level);
-            let genreString = JSON.stringify(data.genres);
+            let cGenreString = JSON.stringify(data.genres);
             db.transaction(txn => {
               txn.executeSql(
-                `INSERT INTO catalog (id, name, grade_level, genres) VALUES(?, ?, ?, ?)`,
-                [cId, cName, cGrade, genreString],
+                `INSERT INTO catalog (id, name, author, grade_level, genres) VALUES(?, ?, ?, ?, ?)`,
+                [cId, cName, cAuthor, cGrade, cGenreString],
                 (sqlTxn, res) => {
                   console.log(`${cName} inserted into Catalog`);
                 },
@@ -223,6 +174,38 @@ export const LibProvider = ({ children }) => {
               );
             });
             break;
+          case "add":
+            let uId = Number(data.id);
+            let uName = JSON.stringify(data.name);
+            let uGrade = Number(data.grade_level);
+            let uAuthor = JSON.stringify(data.author);
+            let uGenreString = JSON.stringify(data.genres);
+            let uJSON = JSON.stringify(data);
+            db.transaction(txn => {
+              txn.executeSql(
+                `INSERT INTO downloads (id, name, author, grade_level, genres) VALUES(?, ?, ?, ?, ?)`,
+                [uId, uName, uAuthor, uGrade, uGenreString],
+                (sqlTxn, res) => {
+                  console.log(`${uName} inserted into Download`);
+                },
+                error => {
+                  console.log(`error`);
+                },
+              );
+            });
+            db.transaction(txn => {
+              txn.executeSql(
+                `INSERT INTO textJSON (id, json) VALUES(?, ?)`,
+                [uId, uJSON],
+                (sqlTxn, res) => {
+                  console.log(`${uName} JSON Stored`);
+                },
+                error => {
+                  console.log(`error`);
+                },
+              );
+            });
+            break;
           default:
             console.log("Default: Please specify key as a type String");
         }
@@ -236,10 +219,10 @@ export const LibProvider = ({ children }) => {
     }
   };
 
-  const getCategories = () => {
+  const getCategories = (filter) => {
     db.transaction(txn => {
       txn.executeSql(
-        'SELECT * FROM catalog',
+        `SELECT * FROM catalog ${filter}`,
         //'SELECT * FROM catalog WHERE grade_level = 9',
         [],
         (sqlTxn, res) => {
@@ -250,7 +233,7 @@ export const LibProvider = ({ children }) => {
             let results = [];
             for (let i = 0; i < len; i++) {
               let item = res.rows.item(i);
-              results.push({ id: item.id, name: item.name, grade_level: item.grade_level, genres: item.genres});
+              results.push({ id: item.id, name: item.name, author: item.author, grade_level: item.grade_level, genres: item.genres});
             }
             setCategories(results);
           }
@@ -261,34 +244,64 @@ export const LibProvider = ({ children }) => {
       );
     });
   };
-  */
 
-    
+  const getDownloads = () => {
+    db.transaction(txn => {
+      txn.executeSql(
+        'SELECT * FROM downloads',
+        //'SELECT * FROM catalog WHERE grade_level = 9',
+        [],
+        (sqlTxn, res) => {
+          console.log("getDownloads called");
+          let len = res.rows.length;
 
-    
-    /*
-    const addBlogPost = () => {
-        setBlogPosts([...blogPosts, { title: `Blog Post #${blogPosts.length + 1}` }]);
-    };
-    
-    const downloadText = () => {
-        setUserList([
-            ...userList, { title:  }
-        ])
-    }
-    useEffect(() => {
-        apiSubLibrary(); 
+          if (len > 0) {
+            let r = [];
+            for (let i = 0; i < len; i++) {
+              let item = res.rows.item(i);
+              r.push({ id: item.id, name: item.name, author: item.author, grade_level: item.grade_level, genres: item.genres});
+            }
+            setDownloads(r);
+          }
+        },
+        error => {
+          console.log("error getting books " + error.message);
+        },
+      );
     });
-    */
+  };
+
+  const getDownloadJSONHTML = (chosenId) => {
+    db.transaction(txn => {
+      txn.executeSql(
+        `SELECT * FROM textJSON WHERE id = ${chosenId}`,
+        [],
+        (sqlTxn, res) => {
+          console.log("getDownloadJSON called");
+          let objectData = JSON.parse(res.rows.item(0).json);
+          //let derivedHTML = JSON.stringify(objectData.html);
+          setTextData(objectData);
+          console.log(textData);
+        },
+        error => {
+          console.log("error getting textJSON " + error.message);
+        },
+      );
+    });
+  };
     
-    apiSubLibrary();
+    useEffect(() => {
+    });
+    
+    //getFromAPILibrary();
     return (
-        
-        <LibContext.Provider value={subCatalog}>
+        <LibContext.Provider value={{data: placeHolder, downloads, categories, textData, getFromAPILibrary, 
+          getBookInfo, createTables, deleteTables, dropTables,
+          getNetInfo, getCategories, getDownloads, getDownloadJSONHTML
+          }}>
             {children}
         </LibContext.Provider>
     );
 };
-
 
 export default LibContext;

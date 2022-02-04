@@ -3,50 +3,42 @@ import { Platform, StyleSheet, SectionList } from 'react-native';
 import { Button } from 'react-native-paper';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import React, { useEffect, useState, useContext } from 'react';
+import LibContext from '../context/LibContext';
 
 export default function FilterScreen() {
-  const DATA = [
-    {
-      title: "Grade Level",
-      data: ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-    },
-    {
-      title: "Genres",
-      data: ["Short Story", "Informational", "Texts", "Poetry", "Misc"]
-    },
-  ];
+  const {categories, getFromAPILibrary, getBookInfo, createTables, deleteTables, dropTables,
+    getNetInfo, getCategories, hm} = useContext(LibContext);
   
-  const Item = ({ title }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  );
+  //data: ["Short Story", "Informational", "Texts", "Poetry", "Misc"]
+  
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title} >Grade Level</Text>
+      <Text style={styles.title} >Nivo De Grado</Text>
       <View style={styles.row}>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>3</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>4</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>5</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>6</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>7</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 3")}>3</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 4")}>4</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 5")}>5</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 6")}>6</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }}onPress={() => getCategories("WHERE grade_level = 7")}>7</Button>
       </View>
       <View style={styles.row}>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>8</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>9</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>10</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>11</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>12</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 8")}>8</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 9")}>9</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 10")}>10</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 11")}>11</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => getCategories("WHERE grade_level = 12")}>12</Button>
       </View>
-      <Text style={styles.title} >Genre</Text>
+      <Text style={styles.title} >Géneros</Text>
       <View style={styles.row}>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>Short Story</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>Informational</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => console.log('Pressed')}>cuento</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => console.log('Pressed')}>informativo</Button>
       </View>
       <View style={styles.row}>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>Texts</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>Poetry</Button>
-        <Button mode="outlined" onPress={() => console.log('Pressed')}>Misc</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => console.log('Pressed')}>textos</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => console.log('Pressed')}>poesía</Button>
+        <Button mode="outlined" labelStyle={{ color: "teal", fontSize: 14 }} onPress={() => console.log('Pressed')}>varios</Button>
       </View>
     </View>
   );
